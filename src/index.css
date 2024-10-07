@@ -17,10 +17,12 @@ header {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 h1 {
   margin: 0;
+  font-size: 24px;
 }
 
 .logout-btn {
@@ -29,6 +31,7 @@ h1 {
   border: none;
   padding: 10px 20px;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 .progress-container {
@@ -62,6 +65,7 @@ h1 {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .task-type-selector {
@@ -79,22 +83,28 @@ button {
   padding: 10px 20px;
   cursor: pointer;
   margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .tasks-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
 }
 
 .primary-tasks, .secondary-tasks {
-  width: 48%;
+  width: 100%;
   background-color: white;
   padding: 20px;
   border-radius: 5px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
 }
 
 .task-item {
   margin-bottom: 10px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .task-header {
@@ -104,6 +114,7 @@ button {
 
 .task-name {
   margin-left: 10px;
+  word-break: break-word;
 }
 
 .steps-list {
@@ -113,10 +124,12 @@ button {
 .step-item {
   display: flex;
   align-items: center;
+  margin-top: 5px;
 }
 
 .step-name {
   margin-left: 10px;
+  word-break: break-word;
 }
 
 .completed {
@@ -128,6 +141,7 @@ button {
   margin-top: 20px;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .login-container {
@@ -145,4 +159,15 @@ button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .tasks-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .primary-tasks, .secondary-tasks {
+    width: 48%;
+  }
 }

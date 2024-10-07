@@ -1,4 +1,3 @@
-// src/components/SecondaryTasks.js
 import React from 'react';
 
 const SecondaryTasks = ({ tasks, setTasks }) => {

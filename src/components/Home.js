@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import PrimaryTasks from './PrimaryTasks';
 import SecondaryTasks from './SecondaryTasks';
@@ -13,6 +13,7 @@ const Home = ({ user }) => {
   const [steps, setSteps] = useState([]);
   const [taskType, setTaskType] = useState('primary');
   const [totalPercentage, setTotalPercentage] = useState(0);
+  const [docId, setDocId] = useState(null);
 
   useEffect(() => {
     loadTasks();
@@ -34,7 +35,8 @@ const Home = ({ user }) => {
 
   useEffect(() => {
     calculateTotalPercentage();
-  }, [primaryTasks]);
+    saveTasks();
+  }, [primaryTasks, secondaryTasks]);
 
   const calculateTotalPercentage = () => {
     const totalTasks = primaryTasks.length;
@@ -78,12 +80,19 @@ const Home = ({ user }) => {
 
   const saveTasks = async () => {
     try {
-      await addDoc(collection(db, 'tasks'), {
-        userId: user.uid,
-        primaryTasks,
-        secondaryTasks,
-      });
-      alert('Tasks saved successfully!');
+      if (docId) {
+        await updateDoc(doc(db, 'tasks', docId), {
+          primaryTasks,
+          secondaryTasks,
+        });
+      } else {
+        const docRef = await addDoc(collection(db, 'tasks'), {
+          userId: user.uid,
+          primaryTasks,
+          secondaryTasks,
+        });
+        setDocId(docRef.id);
+      }
     } catch (error) {
       console.error('Error saving tasks: ', error);
     }
@@ -97,6 +106,7 @@ const Home = ({ user }) => {
         const data = doc.data();
         setPrimaryTasks(data.primaryTasks);
         setSecondaryTasks(data.secondaryTasks);
+        setDocId(doc.id);
       });
     } catch (error) {
       console.error('Error loading tasks: ', error);
@@ -119,7 +129,7 @@ const Home = ({ user }) => {
   return (
     <div className="home-container">
       <header>
-        <h1>समय का ख्याल (⚠️ Save Before Logout)</h1>
+        <h1>समय का ख्याल, {user.displayName.split(' ')[0]}!</h1>
         <button className="logout-btn" onClick={handleLogout}>Logout</button>
       </header>
       <div className="progress-container">
@@ -177,10 +187,6 @@ const Home = ({ user }) => {
         setPrimaryTasks(updatedTasks.slice(0, primaryCount));
         setSecondaryTasks(updatedTasks.slice(primaryCount));
       }} />
-      <div className="save-load-buttons">
-        <button onClick={saveTasks}>Save Tasks</button>
-        <button onClick={loadTasks}>Load Tasks</button>
-      </div>
     </div>
   );
 };
