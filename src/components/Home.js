@@ -16,7 +16,9 @@ const Home = ({ user }) => {
   const [docId, setDocId] = useState(null);
 
   useEffect(() => {
-    loadTasks();
+    if (!primaryTasks.length && !secondaryTasks.length) {
+      loadTasks();
+    }
     const lastResetTime = localStorage.getItem('lastResetTime');
     const now = new Date().getTime();
 
@@ -36,6 +38,7 @@ const Home = ({ user }) => {
   useEffect(() => {
     calculateTotalPercentage();
     saveTasks();
+    loadTasks();
   }, [primaryTasks, secondaryTasks]);
 
   const calculateTotalPercentage = () => {
@@ -62,6 +65,7 @@ const Home = ({ user }) => {
 
     setTaskName('');
     setSteps([]);
+    saveTasks();
   };
 
   const handleStepChange = (index, value) => {
@@ -114,12 +118,16 @@ const Home = ({ user }) => {
   };
 
   const resetPrimaryTasks = () => {
-    const resetTasks = primaryTasks.map(task => ({
-      ...task,
-      isCompleted: false,
-      steps: task.steps.map(step => ({ ...step, isCompleted: false }))
-    }));
-    setPrimaryTasks(resetTasks);
+    if (Array.isArray(primaryTasks)) {
+      const resetTasks = primaryTasks.map(task => ({
+        ...task,
+        isCompleted: false,
+        steps: task.steps.map(step => ({ ...step, isCompleted: false }))
+      }));
+      setPrimaryTasks(resetTasks);
+    } else {
+      console.error('primaryTasks is not an array');
+    }
   };
 
   const handleLogout = () => {
@@ -182,7 +190,7 @@ const Home = ({ user }) => {
         <PrimaryTasks tasks={primaryTasks} setTasks={setPrimaryTasks} />
         <SecondaryTasks tasks={secondaryTasks} setTasks={setSecondaryTasks} />
       </div>
-      <Tasks tasks={[...primaryTasks, ...secondaryTasks]} setTasks={(updatedTasks) => {
+      <Tasks tasks={[...primaryTasks, ...secondaryTasks]} saveTasks={saveTasks} setTasks={(updatedTasks) => {
         const primaryCount = primaryTasks.length;
         setPrimaryTasks(updatedTasks.slice(0, primaryCount));
         setSecondaryTasks(updatedTasks.slice(primaryCount));

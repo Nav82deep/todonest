@@ -171,3 +171,8 @@ button {
     width: 48%;
   }
 }
+.task-item {
+  white-space: nowrap;
+  overflow: wrap;
+  text-overflow: clip;
+}

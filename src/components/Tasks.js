@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Tasks = ({ tasks, setTasks }) => {
+const Tasks = ({ tasks, setTasks , saveTasks}) => {
   const [editIndex, setEditIndex] = useState(null);
   const [editedTask, setEditedTask] = useState({ name: '', steps: [] });
 
@@ -13,6 +13,7 @@ const Tasks = ({ tasks, setTasks }) => {
     const updatedTasks = [...tasks];
     updatedTasks[index] = editedTask;
     setTasks(updatedTasks);
+    saveTasks();
     setEditIndex(null);
   };
 
